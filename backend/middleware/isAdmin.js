@@ -4,7 +4,7 @@ const isAdmin = (req, res, next) => {
     } else {
         res.status(403).json({
             success: false,
-            message: "Acesso negado. Você não tem permissão de administrador."
+            message: "Acesso negado. Esta ação é permitida apenas para administradores."
         });
     }
 };

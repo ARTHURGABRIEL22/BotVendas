@@ -22,7 +22,7 @@ const apiFetch = async (endpoint, options = {}) => {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: `Erro de servidor com status ${response.status}` }));
-        throw new Error(errorData.message); 
+        throw new Error(errorData.message);
     }
     return response.json();
 };
@@ -57,25 +57,51 @@ const apiService = {
         method: 'PATCH',
         body: { status, motivo_cancelamento: motivo }
     }),
-    
-    getEquipe: () => apiFetch('/equipe'),
 
-    /**
-     * Cria um novo funcionário para a loja.
-     * Rota: POST /api/equipe
-     * @param {object} funcionarioData - { nome, email, senha }
-     */
+    // Equipe
+    getEquipe: () => apiFetch('/equipe'),
     createFuncionario: (funcionarioData) => apiFetch('/equipe', {
         method: 'POST',
         body: funcionarioData
     }),
+    deleteFuncionario: (idFuncionario) => apiFetch(`/equipe/${idFuncionario}`, {
+        method: 'DELETE'
+    }),
+    updatePermissoes: (idFuncionario, permissoes) => apiFetch(`/equipe/${idFuncionario}/permissoes`, {
+        method: 'PATCH',
+        body: { permissoes }
+    }),
+
+    getBotConfig: () => apiFetch('/configuracoes-bot'),
 
     /**
-     * Deleta um funcionário da loja.
-     * Rota: DELETE /api/equipe/:id
-     * @param {string} idFuncionario - O ID do usuário a ser deletado.
+     * Atualiza as configurações gerais do bot.
+     * Rota: PUT /api/configuracoes-bot
+     * @param {object} configData - Objeto com as configurações
      */
-    deleteFuncionario: (idFuncionario) => apiFetch(`/equipe/${idFuncionario}`, {
+    updateBotConfig: (configData) => apiFetch('/configuracoes-bot', {
+        method: 'PUT',
+        body: configData
+    }),
+
+    getFolg_as: () => apiFetch('/configuracoes-bot/folgas'),
+
+    /**
+     * Cria um novo dia de folga.
+     * Rota: POST /api/configuracoes-bot/folgas
+     * @param {object} folgaData - { data_folga, motivo }
+     */
+    createFolga: (folgaData) => apiFetch('/configuracoes-bot/folgas', {
+        method: 'POST',
+        body: folgaData
+    }),
+
+    /**
+     * Deleta um dia de folga agendado.
+     * Rota: DELETE /api/configuracoes-bot/folgas/:id
+     * @param {string} idFolga - ID da folga a ser deletada
+     */
+    deleteFolga: (idFolga) => apiFetch(`/configuracoes-bot/folgas/${idFolga}`, {
         method: 'DELETE'
     }),
 };

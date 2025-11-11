@@ -11,6 +11,7 @@ const recoveryRoutes = require('./routes/recoveryRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
 const equipeRoutes = require('./routes/equipeRoutes');
+const configBotRoutes = require('./routes/configBotRoutes');
 
 const app = express();
 app.use(cors());
@@ -24,7 +25,8 @@ app.use('/api/dashboard', authMiddleware, dashboardRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/estoque', authMiddleware, estoqueRoutes);
 app.use('/api/empresas', empresaRoutes);
-app.use('/api/equipe', equipeRoutes);
+app.use('/api/equipe', authMiddleware, equipeRoutes);
+app.use('/api/configuracoes-bot', configBotRoutes);
 console.log('👍 Todas as rotas foram carregadas com sucesso!');
 
 app.get('/api', (req, res) => {

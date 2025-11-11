@@ -1,22 +1,86 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import apiService from '../services/apiService';
-import { FiUsers, FiUserPlus, FiTrash2 } from 'react-icons/fi';
+import { FiUsers, FiUserPlus, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
 import './Equipe.css'; 
+
+const EditModal = ({ usuario, onClose, onSave }) => {
+    const [permissoes, setPermissoes] = useState({
+        pode_ver_pedidos: usuario.pode_ver_pedidos,
+        pode_ver_estoque: usuario.pode_ver_estoque,
+        pode_configurar_bot: usuario.pode_configurar_bot,
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handlePermissionChange = (e) => {
+        const { name, checked } = e.target;
+        setPermissoes(prev => ({ ...prev, [name]: checked }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        await onSave(usuario.id, permissoes);
+        setIsSubmitting(false);
+        onClose(); 
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <header className="modal-header">
+                    <h3>Editando Permissões de: {usuario.nome}</h3>
+                    <button onClick={onClose} className="modal-close-button"><FiX /></button>
+                </header>
+                <form onSubmit={handleSubmit}>
+                    <div className="modal-body">
+                        <div className="form-grupo-equipe">
+                            <label className="checkbox-label-equipe">
+                                <input type="checkbox" name="pode_ver_pedidos" checked={permissoes.pode_ver_pedidos} onChange={handlePermissionChange} />
+                                <span className="checkbox-custom"></span>
+                                <span>Ver Pedidos</span>
+                            </label>
+                            <label className="checkbox-label-equipe">
+                                <input type="checkbox" name="pode_ver_estoque" checked={permissoes.pode_ver_estoque} onChange={handlePermissionChange} />
+                                <span className="checkbox-custom"></span>
+                                <span>Ver Estoque</span>
+                            </label>
+                            <label className="checkbox-label-equipe">
+                                <input type="checkbox" name="pode_configurar_bot" checked={permissoes.pode_configurar_bot} onChange={handlePermissionChange} />
+                                <span className="checkbox-custom"></span>
+                                <span>Configurar Bot</span>
+                            </label>
+                        </div>
+                    </div>
+                    <footer className="modal-footer">
+                        <button type="button" className="botao-secundario" onClick={onClose}>Cancelar</button>
+                        <button type="submit" className="button-submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Salvando...' : 'Salvar'}
+                        </button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 const Equipe = () => {
     const [equipe, setEquipe] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [notification, setNotification] = useState({ type: '', message: '' });
 
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [permissoes, setPermissoes] = useState({
-        pode_ver_pedidos: true, 
+    const [permissoesForm, setPermissoesForm] = useState({
+        pode_ver_pedidos: true,
         pode_ver_estoque: false,
+        pode_configurar_bot: false,
     });
+
+    const [editingUser, setEditingUser] = useState(null);
 
     const fetchEquipe = useCallback(async () => {
         try {
@@ -37,21 +101,21 @@ const Equipe = () => {
 
     const handlePermissionChange = (e) => {
         const { name, checked } = e.target;
-        setPermissoes(prev => ({ ...prev, [name]: checked }));
+        setPermissoesForm(prev => ({ ...prev, [name]: checked }));
     };
 
     const handleCreateFuncionario = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setError(null);
+        setNotification({ type: '', message: '' });
 
         try {
-            await apiService.createFuncionario({ nome, email, senha, permissoes });
-            setNome('');
-            setEmail('');
-            setSenha('');
-            setPermissoes({ pode_ver_pedidos: true, pode_ver_estoque: false }); 
-            await fetchEquipe(); 
+            await apiService.createFuncionario({ nome, email, senha, permissoes: permissoesForm });
+            setNome(''); setEmail(''); setSenha('');
+            setPermissoesForm({ pode_ver_pedidos: true, pode_ver_estoque: false, pode_configurar_bot: false });
+            setNotification({ type: 'success', message: 'Funcionário criado com sucesso!' });
+            await fetchEquipe();
         } catch (err) {
             setError(err.message || "Não foi possível criar o funcionário.");
         } finally {
@@ -64,18 +128,33 @@ const Equipe = () => {
             try {
                 setError(null);
                 await apiService.deleteFuncionario(id);
-                await fetchEquipe(); 
+                setNotification({ type: 'success', message: 'Funcionário deletado!' });
+                await fetchEquipe();
             } catch (err) {
                 setError(err.message || "Não foi possível deletar o funcionário.");
             }
         }
     };
 
+    const handleSavePermissoes = async (id, permissoes) => {
+        try {
+            setError(null);
+            await apiService.updatePermissoes(id, permissoes);
+            setNotification({ type: 'success', message: 'Permissões atualizadas!' });
+            await fetchEquipe();
+        } catch (err) {
+            setError(err.message || "Não foi possível atualizar as permissões.");
+        }
+    };
+
     return (
         <div className="container-equipe">
+            {editingUser && <EditModal usuario={editingUser} onClose={() => setEditingUser(null)} onSave={handleSavePermissoes} />}
+            
             <h2 className="titulo-pagina"><FiUsers /> Gerenciamento de Equipe</h2>
 
             {error && <div className="notification error" style={{ marginBottom: '1rem' }}>{error}</div>}
+            {notification.message && <div className={`notification ${notification.type}`}>{notification.message}</div>}
             
             <div className="equipe-layout">
                 
@@ -98,14 +177,19 @@ const Equipe = () => {
                         <div className="form-grupo-equipe">
                             <label>Permissões</label>
                             <label className="checkbox-label-equipe">
-                                <input type="checkbox" name="pode_ver_pedidos" checked={permissoes.pode_ver_pedidos} onChange={handlePermissionChange} />
+                                <input type="checkbox" name="pode_ver_pedidos" checked={permissoesForm.pode_ver_pedidos} onChange={handlePermissionChange} />
                                 <span className="checkbox-custom"></span>
                                 <span>Ver Pedidos</span>
                             </label>
                             <label className="checkbox-label-equipe">
-                                <input type="checkbox" name="pode_ver_estoque" checked={permissoes.pode_ver_estoque} onChange={handlePermissionChange} />
+                                <input type="checkbox" name="pode_ver_estoque" checked={permissoesForm.pode_ver_estoque} onChange={handlePermissionChange} />
                                 <span className="checkbox-custom"></span>
                                 <span>Ver Estoque</span>
+                            </label>
+                            <label className="checkbox-label-equipe">
+                                <input type="checkbox" name="pode_configurar_bot" checked={permissoesForm.pode_configurar_bot} onChange={handlePermissionChange} />
+                                <span className="checkbox-custom"></span>
+                                <span>Configurar Bot</span>
                             </label>
                         </div>
                         
@@ -146,14 +230,20 @@ const Equipe = () => {
                                                 <>
                                                     {user.pode_ver_pedidos ? <span title="Pedidos">Pedidos</span> : ''}
                                                     {user.pode_ver_estoque ? <span title="Estoque">Estoque</span> : ''}
+                                                    {user.pode_configurar_bot ? <span title="Bot">Bot</span> : ''}
                                                 </>
                                             )}
                                         </td>
                                         <td>
                                             {user.cargo === 'funcionario' && (
-                                                <button onClick={() => handleDeleteFuncionario(user.id)} className="botao-acao deletar" title="Deletar Funcionário">
-                                                    <FiTrash2 />
-                                                </button>
+                                                <div className="acoes-tabela">
+                                                    <button onClick={() => setEditingUser(user)} className="botao-acao editar" title="Editar Permissões">
+                                                        <FiEdit2 />
+                                                    </button>
+                                                    <button onClick={() => handleDeleteFuncionario(user.id)} className="botao-acao deletar" title="Deletar Funcionário">
+                                                        <FiTrash2 />
+                                                    </button>
+                                                </div>
                                             )}
                                         </td>
                                     </tr>

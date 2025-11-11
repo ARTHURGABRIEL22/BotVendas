@@ -16,7 +16,6 @@ exports.loginUser = async (email, senha) => {
     if (empresasAdmin.length > 0) {
         empresa = empresasAdmin[0];
         const tenantPool = getTenantPool(empresa.banco_dados);
-        
         const [usuariosAdmin] = await tenantPool.query(
             `SELECT * FROM usuarios WHERE email = ? AND ativo = TRUE`, [email]
         );
@@ -25,18 +24,15 @@ exports.loginUser = async (email, senha) => {
         }
     } else {
         const [todasEmpresas] = await centralDb.query('SELECT id, nome, banco_dados, tipo_negocio FROM empresas');
-        
         for (const emp of todasEmpresas) {
             const tenantPool = getTenantPool(emp.banco_dados);
-            
             const [usuariosFunc] = await tenantPool.query(
                 `SELECT * FROM usuarios WHERE email = ? AND ativo = TRUE`, [email]
             );
-
             if (usuariosFunc.length > 0) {
                 usuario = usuariosFunc[0];
-                empresa = emp; 
-                break; 
+                empresa = emp;
+                break;
             }
         }
     }
@@ -44,7 +40,6 @@ exports.loginUser = async (email, senha) => {
     if (!usuario || !empresa) {
         throw new Error("Usuário ou senha inválidos.");
     }
-
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
     if (!senhaValida) {
         throw new Error("Usuário ou senha inválidos.");
@@ -52,7 +47,8 @@ exports.loginUser = async (email, senha) => {
 
     const permissoes = {
         ver_pedidos: Boolean(usuario.pode_ver_pedidos),
-        ver_estoque: Boolean(usuario.pode_ver_estoque)
+        ver_estoque: Boolean(usuario.pode_ver_estoque),
+        pode_configurar_bot: Boolean(usuario.pode_configurar_bot) 
     };
 
     const payload = {
@@ -61,7 +57,7 @@ exports.loginUser = async (email, senha) => {
         cargo: usuario.cargo,
         empresaId: empresa.id,
         banco_dados: empresa.banco_dados,
-        permissoes: permissoes
+        permissoes: permissoes 
     };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '8h' }); 
@@ -74,7 +70,7 @@ exports.loginUser = async (email, senha) => {
             email: usuario.email,
             nome_empresa: empresa.nome,
             cargo: usuario.cargo,
-            permissoes: permissoes
+            permissoes: permissoes 
         }
     };
 };

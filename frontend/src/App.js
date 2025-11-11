@@ -7,7 +7,7 @@ import DashboardLayout from './components/DashboardLayout';
 import Login from './components/Login';
 import SolicitarRecuperacao from './components/SolicitarRecuperacao';
 import DefinirSenha from './components/DefinirSenha';
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './components/AdminDashboard'; 
 
 import Dashboard from "./components/Dashboard";
 import Pedidos from "./components/Pedidos";
@@ -15,6 +15,7 @@ import Estoque from "./components/Estoque";
 import CadastrarItem from "./components/CadastrarItem";
 import EditarItem from "./components/EditarItem";
 import Equipe from "./components/Equipe"; 
+import ConfiguracoesBot from "./components/ConfiguracoesBot"; 
 
 const App = () => {
     return (
@@ -32,7 +33,8 @@ const App = () => {
                         <Route path="/estoque" element={<Estoque />} />
                         <Route path="/cadastrar-item" element={<CadastrarItem />} />
                         <Route path="/editar-item/:id" element={<EditarItem />} />
-                        <Route path="/equipe" element={<Equipe />} /> 
+                        <Route path="/equipe" element={<Equipe />} />
+                        <Route path="/configuracoes" element={<ConfiguracoesBot />} /> 
                     </Route>
                 </Route>
 

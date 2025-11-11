@@ -52,16 +52,23 @@ exports.createEmpresa = async (empresaData) => {
         const estoqueSchema = schemas.estoque[tipo_negocio] || schemas.estoque.padrao;
         await tenantPool.query(schemas.usuarios);
         await tenantPool.query(schemas.pedidos);
-        await tenantPool.query(schemas.tokens_recuperacao); 
+        await tenantPool.query(schemas.tokens_recuperacao);
+        await tenantPool.query(schemas.configuracoes_bot); 
+        await tenantPool.query(schemas.dias_folga);       
         await tenantPool.query(estoqueSchema);
+
+        await tenantPool.query(
+            `INSERT INTO configuracoes_bot (dias_funcionamento, horario_abertura, horario_fechamento, mensagem_fora_horario, mensagem_folga) VALUES (?, ?, ?, ?, ?)`,
+            ['["seg", "ter", "qua", "qui", "sex", "sab"]', '08:00:00', '18:00:00', 'Olá! Nosso horário de atendimento é das 8h às 18h, de Segunda a Sábado. Te responderemos assim que voltarmos!', 'Olá! Hoje não estamos funcionando. Voltamos em breve!']
+        );
 
         const senhaInicial = empresaData.senha || 'mudar123';
         const saltRounds = 10;
         const senhaHasheada = await bcrypt.hash(senhaInicial, saltRounds);
 
         await tenantPool.query(
-            `INSERT INTO usuarios (email, senha, nome, cargo, pode_ver_pedidos, pode_ver_estoque) VALUES (?, ?, ?, ?, ?, ?)`,
-            [email, senhaHasheada, proprietario, 'admin', 1, 1] 
+            `INSERT INTO usuarios (email, senha, nome, cargo, pode_ver_pedidos, pode_ver_estoque, pode_configurar_bot) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [email, senhaHasheada, proprietario, 'admin', 1, 1, 1] 
         );
 
         await connection.commit();

@@ -12,4 +12,6 @@ router.post('/', isAdmin, equipeController.handleCreateFuncionario);
 
 router.delete('/:id', isAdmin, equipeController.handleDeleteFuncionario);
 
+router.patch('/:id/permissoes', isAdmin, equipeController.handleUpdatePermissoes);
+
 module.exports = router;

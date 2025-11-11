@@ -7,10 +7,9 @@ const schemas = {
             senha VARCHAR(255) NOT NULL,
             cargo ENUM('admin', 'funcionario') DEFAULT 'admin',
             ativo TINYINT(1) DEFAULT 1,
-
-            -- ✅ NOVAS PERMISSÕES ADICIONADAS AQUI ✅ --
             pode_ver_pedidos TINYINT(1) NOT NULL DEFAULT 0,
             pode_ver_estoque TINYINT(1) NOT NULL DEFAULT 0,
+            pode_configurar_bot TINYINT(1) NOT NULL DEFAULT 0,
             
             criado_em TIMESTAMP NOT NULL DEFAULT current_timestamp()
         );
@@ -43,6 +42,26 @@ const schemas = {
             expiracao DATETIME NOT NULL,
             INDEX (email)
         );
+    `,
+    configuracoes_bot: `
+        CREATE TABLE IF NOT EXISTS configuracoes_bot (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          bot_ativo TINYINT(1) NOT NULL DEFAULT 1,
+          dias_funcionamento JSON,
+          horario_abertura TIME DEFAULT '08:00:00',
+          horario_fechamento TIME DEFAULT '18:00:00',
+          mensagem_fora_horario TEXT,
+          mensagem_folga TEXT
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    `,
+    dias_folga: `
+        CREATE TABLE IF NOT EXISTS dias_folga (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          data_folga DATE NOT NULL,
+          motivo VARCHAR(255) NOT NULL,
+          ativo TINYINT(1) NOT NULL DEFAULT 1,
+          UNIQUE KEY data_unica (data_folga)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
     `,
     estoque: {
         padrao: `

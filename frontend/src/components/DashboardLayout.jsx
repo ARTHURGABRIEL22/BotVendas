@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { FiGrid, FiBox, FiClipboard, FiLogOut, FiUsers } from 'react-icons/fi';
+import { FiGrid, FiBox, FiClipboard, FiLogOut, FiUsers, FiSettings } from 'react-icons/fi';
 import { authService } from '../services/authService';
 import './DashboardLayout.css';
 
@@ -49,6 +49,12 @@ const DashboardLayout = () => {
                     {user.permissoes.ver_estoque && (
                         <NavLink to="/estoque">
                             <FiBox /> Estoque
+                        </NavLink>
+                    )}
+
+                    {user.permissoes.pode_configurar_bot && (
+                        <NavLink to="/configuracoes">
+                            <FiSettings /> Configurar Bot
                         </NavLink>
                     )}
 

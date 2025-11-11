@@ -12,10 +12,16 @@ O sistema é construído sobre uma arquitetura **Multi-Tenant**, onde cada empre
 
 * **Arquitetura Multi-Tenant:** Um banco de dados central (`rzbotvendas`) gerencia as lojas, e cada loja (`empresa_...`) tem seu próprio banco de dados para clientes, pedidos e estoque.
 * **Painel Super Admin (`/admin`):** Uma interface dedicada para o dono do SaaS criar, gerenciar e configurar novas contas de lojas.
-* **Controle de Acesso (RBAC):** O gestor da loja (`admin`) pode criar contas para `funcionários` e definir permissões granulares sobre quais módulos eles podem acessar (ex: ver apenas pedidos, mas não o estoque).
+* **Controle de Acesso (RBAC):** O gestor da loja (`admin`) pode criar contas para `funcionários` e definir permissões granulares sobre quais módulos eles podem acessar (ex: ver Pedidos, ver Estoque, configurar o Bot).
+* **Módulo de Configuração do Bot:** Uma tela dedicada onde o gestor (ou funcionário com permissão) pode definir:
+    * Horários de funcionamento (ex: 08:00 às 18:00).
+    * Dias da semana de atendimento (ex: Seg a Sáb).
+    * Mensagens personalizadas para quando o bot estiver "fora do horário".
+    * Agendamento de dias de folga (ex: Feriado, com motivo).
 * **Autenticação Segura:** Sistema de login completo com senhas criptografadas (Bcrypt) e autenticação de sessão via **Tokens JWT (JSON Web Token)**.
 * **Gerenciamento de Estoque (CRUD):** Funcionalidades completas para criar, ler, atualizar e deletar produtos, incluindo upload de imagens.
 * **Bot Conversacional (WhatsApp):**
+    * **Inteligência de Horário:** O bot verifica automaticamente se a loja está em dia de folga ou fora do horário de funcionamento antes de iniciar o atendimento.
     * Identificação automática da loja pelo número de telefone.
     * Fluxo de catálogo completo com paginação e busca.
     * Gerenciamento de carrinho (adicionar, remover, ver carrinho).
