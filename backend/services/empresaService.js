@@ -60,8 +60,8 @@ exports.createEmpresa = async (empresaData) => {
         const senhaHasheada = await bcrypt.hash(senhaInicial, saltRounds);
 
         await tenantPool.query(
-            `INSERT INTO usuarios (email, senha, nome, cargo) VALUES (?, ?, ?, ?)`,
-            [email, senhaHasheada, proprietario, 'admin']
+            `INSERT INTO usuarios (email, senha, nome, cargo, pode_ver_pedidos, pode_ver_estoque) VALUES (?, ?, ?, ?, ?, ?)`,
+            [email, senhaHasheada, proprietario, 'admin', 1, 1] 
         );
 
         await connection.commit();
@@ -103,10 +103,8 @@ exports.getEstoqueByEmpresaId = async (idEmpresa) => {
     }
     
     const nomeBanco = empresaRows[0].banco_dados;
-
     const tenantPool = getTenantPool(nomeBanco);
-
     const [produtos] = await tenantPool.query('SELECT * FROM estoque');
     
-    return produtos; 
+    return produtos;
 };

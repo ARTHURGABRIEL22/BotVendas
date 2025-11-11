@@ -160,7 +160,12 @@ h3 {
     display: none; 
 }
 
-.checkbox-label::before {
+.checkbox-label span {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label span::before {
     content: '';
     width: 18px;
     height: 18px;
@@ -169,9 +174,10 @@ h3 {
     background-color: var(--cor-fundo-container);
     transition: all 0.2s ease;
     flex-shrink: 0;
+    margin-right: 0.75rem; 
 }
 
-.checkbox-label input[type="checkbox"]:checked + ::before {
+.checkbox-label input[type="checkbox"]:checked + span::before {
     background-color: var(--cor-primaria);
     border-color: var(--cor-primaria);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");

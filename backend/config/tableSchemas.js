@@ -5,9 +5,14 @@ const schemas = {
             email VARCHAR(255) UNIQUE NOT NULL,
             nome VARCHAR(255),
             senha VARCHAR(255) NOT NULL,
-            cargo ENUM('admin', 'funcionario') DEFAULT 'admin', -- Controle de permissão futuro
-            ativo BOOLEAN DEFAULT TRUE,
-            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            cargo ENUM('admin', 'funcionario') DEFAULT 'admin',
+            ativo TINYINT(1) DEFAULT 1,
+
+            -- ✅ NOVAS PERMISSÕES ADICIONADAS AQUI ✅ --
+            pode_ver_pedidos TINYINT(1) NOT NULL DEFAULT 0,
+            pode_ver_estoque TINYINT(1) NOT NULL DEFAULT 0,
+            
+            criado_em TIMESTAMP NOT NULL DEFAULT current_timestamp()
         );
     `,
     pedidos: `
@@ -27,7 +32,16 @@ const schemas = {
             forma_pagamento VARCHAR(50),
             motivo_cancelamento TEXT NULL DEFAULT NULL,
             observacao TEXT,
-            data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            data_pedido TIMESTAMP NOT NULL DEFAULT current_timestamp()
+        );
+    `,
+    tokens_recuperacao: `
+        CREATE TABLE IF NOT EXISTS tokens_recuperacao (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(255) NOT NULL,
+            token VARCHAR(255) NOT NULL UNIQUE,
+            expiracao DATETIME NOT NULL,
+            INDEX (email)
         );
     `,
     estoque: {
@@ -38,8 +52,8 @@ const schemas = {
                 descricao TEXT,
                 preco DECIMAL(10,2) NOT NULL,
                 quantidade INT DEFAULT 0,
-                unidade_medida VARCHAR(20) DEFAULT 'un', -- ex: 'un', 'kg', 'pacote'
-                sku VARCHAR(100) UNIQUE, -- Código de barras ou de controle interno
+                unidade_medida VARCHAR(20) DEFAULT 'un',
+                sku VARCHAR(100) UNIQUE,
                 categoria VARCHAR(100),
                 disponivel BOOLEAN DEFAULT TRUE,
                 imagem_url TEXT,
@@ -49,16 +63,16 @@ const schemas = {
         'Loja de Roupas': `
             CREATE TABLE IF NOT EXISTS estoque (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255) NOT NULL, /* Ex: Camiseta Gola V */
+                nome VARCHAR(255) NOT NULL,
                 descricao TEXT,
                 preco DECIMAL(10,2) NOT NULL,
                 quantidade INT NOT NULL,
-                tamanho VARCHAR(20), /* Ex: P, M, G, GG, 42 */
+                tamanho VARCHAR(20),
                 cor VARCHAR(50),
                 marca VARCHAR(100),
                 genero ENUM('Masculino', 'Feminino', 'Unissex'),
                 sku VARCHAR(100) UNIQUE,
-                categoria VARCHAR(100), /* Ex: Camisetas, Calças, Acessórios */
+                categoria VARCHAR(100),
                 imagem_url TEXT,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -66,12 +80,12 @@ const schemas = {
         'Restaurante': `
             CREATE TABLE IF NOT EXISTS estoque (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255) NOT NULL, /* Ex: X-Tudo, Porção de Fritas */
-                descricao TEXT, /* Ex: Pão, bife, queijo, alface... */
+                nome VARCHAR(255) NOT NULL,
+                descricao TEXT,
                 preco DECIMAL(10,2) NOT NULL,
                 categoria ENUM('Bebida', 'Lanche', 'Pizza', 'Prato Feito', 'Sobremesa', 'Acompanhamento', 'Combo'),
-                disponivel BOOLEAN DEFAULT TRUE, /* Controle de disponibilidade é mais comum que de quantidade */
-                tempo_preparo_min INT, /* Tempo estimado em minutos */
+                disponivel BOOLEAN DEFAULT TRUE,
+                tempo_preparo_min INT,
                 imagem_url TEXT,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -79,8 +93,8 @@ const schemas = {
         'Pizzaria': `
             CREATE TABLE IF NOT EXISTS estoque (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                sabor VARCHAR(255) NOT NULL, /* Ex: Calabresa, Quatro Queijos */
-                descricao TEXT, /* Ingredientes */
+                sabor VARCHAR(255) NOT NULL,
+                descricao TEXT,
                 preco_brotinho DECIMAL(10,2),
                 preco_media DECIMAL(10,2),
                 preco_grande DECIMAL(10,2),
@@ -97,11 +111,11 @@ const schemas = {
                 nome_comercial VARCHAR(255) NOT NULL,
                 principio_ativo VARCHAR(255),
                 laboratorio VARCHAR(100),
-                dosagem VARCHAR(50), /* Ex: 500mg, 20ml/g */
+                dosagem VARCHAR(50),
                 preco DECIMAL(10,2) NOT NULL,
                 quantidade INT NOT NULL,
                 requer_receita BOOLEAN DEFAULT FALSE,
-                ean VARCHAR(13) UNIQUE, /* Código de barras universal */
+                ean VARCHAR(13) UNIQUE,
                 categoria ENUM('Medicamento', 'Perfumaria', 'Higiene', 'Suplemento', 'Infantil'),
                 imagem_url TEXT,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -125,11 +139,11 @@ const schemas = {
         'Loja de Açaí e Sorveteria': `
             CREATE TABLE IF NOT EXISTS estoque (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                nome VARCHAR(255) NOT NULL, /* Ex: Açaí com Morango, Sorvete de Chocolate */
+                nome VARCHAR(255) NOT NULL,
                 descricao TEXT,
-                preco_p DECIMAL(10,2), /* Preço para copo/pote pequeno */
-                preco_m DECIMAL(10,2), /* Preço para copo/pote médio */
-                preco_g DECIMAL(10,2), /* Preço para copo/pote grande */
+                preco_p DECIMAL(10,2),
+                preco_m DECIMAL(10,2),
+                preco_g DECIMAL(10,2),
                 categoria ENUM('Açaí', 'Cupuaçu', 'Sorvete de Massa', 'Picolé', 'Bebida'),
                 disponivel BOOLEAN DEFAULT TRUE,
                 imagem_url TEXT,
@@ -137,15 +151,6 @@ const schemas = {
             );
         `
     },
-    tokens_recuperacao: `
-    CREATE TABLE IF NOT EXISTS tokens_recuperacao (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(255) NOT NULL,
-        token VARCHAR(255) NOT NULL UNIQUE,
-        expiracao DATETIME NOT NULL,
-        INDEX (email)
-    );
-`,
 };
 
 module.exports = schemas;

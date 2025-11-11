@@ -23,7 +23,11 @@ exports.handleCommand = async (client, message) => {
         return;
     }
     if (text === '3') {
-        await client.sendMessage(from, '💬 Um de nossos atendentes humanos irá te responder em breve. Por favor, aguarde ou envie sua dúvida!');
+        state.userStates[from] = 'human_support';
+        
+        const msg = "Redirecionando para o atendimento humanizado... 🧑‍💻\n\nNossos atendentes já foram notificados.\n\n*IMPORTANTE:* O bot ficará pausado. Para voltar a falar comigo, digite *finalizar atendimento* a qualquer momento.";
+        await client.sendMessage(from, msg);
+        
         return;
     }
     if (text === '4') {

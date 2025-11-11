@@ -129,7 +129,7 @@ const EmpresaForm = ({ onSubmit }) => {
                     {formasPagamentoOptions.map(metodo => (
                         <label key={metodo} className="checkbox-label">
                             <input type="checkbox" value={metodo} onChange={handleFormasPagamentoChange} />
-                            {metodo}
+                            <span>{metodo}</span>
                         </label>
                     ))}
                 </div>

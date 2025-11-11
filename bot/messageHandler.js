@@ -1,5 +1,5 @@
 const state = require('./state');
-const apiService = require('./services/apiService');
+const apiService = require('../services/apiService');
 const commandHandler = require('./handlers/commandHandler');
 const catalogHandler = require('./handlers/catalogHandler');
 const cartHandler = require('./handlers/cartHandler');
@@ -25,7 +25,18 @@ exports.handleMessage = async (client, message) => {
     if (!message || !message.body || message.fromMe) return; 
 
     const from = message.from;
+    const text = message.body.toLowerCase().trim();
     const userState = state.userStates[from];
+
+    if (userState === 'human_support') {
+        if (text === 'finalizar atendimento') {
+            delete state.userStates[from]; 
+            await client.sendMessage(from, "Atendimento humanizado finalizado. ✅\n\nEstou de volta! Digite *oi* para ver o menu principal.");
+        } else {
+            return; 
+        }
+        return; 
+    }
 
     try {
         if (userState === 'adding_to_cart') {

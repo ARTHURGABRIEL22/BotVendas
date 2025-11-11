@@ -1,99 +1,100 @@
-# 🧠 Bot Vendas – Automação de WhatsApp para Lojas
+# 🧠 Bot Vendas – Sistema SaaS de Automação para WhatsApp
 
 ## 📌 Visão Geral
-**Bot Vendas** é um sistema **SaaS** voltado para empresas que desejam automatizar o atendimento e vendas pelo **WhatsApp**. Através dele, as empresas conseguem cadastrar seu estoque, configurar o bot de atendimento e acompanhar os pedidos diretamente de um **painel gerencial intuitivo**.
+
+O **Bot Vendas** é um sistema completo de **SaaS (Software como Serviço)**, desenvolvido como um Projeto de Conclusão de Curso (TCC). A plataforma permite que pequenas e médias empresas automatizem seu atendimento, gerenciamento de catálogo e processo de vendas diretamente pelo **WhatsApp**.
+
+O sistema é construído sobre uma arquitetura **Multi-Tenant**, onde cada empresa cliente possui um banco de dados de operação isolado, garantindo total privacidade e segurança dos dados. O gerenciamento é feito através de um painel de controle web intuitivo, que conta com um sistema de permissões **RBAC (Role-Based Access Control)**, distinguindo o acesso entre `Administradores` e `Funcionários`.
 
 ---
 
-## 🏗 Estrutura do Projeto
-O sistema é dividido em três camadas principais:
+## ✨ Funcionalidades Principais
 
-- **Backend (`backend/`)** – API REST feita em Node.js com integração a banco de dados MySQL.
-- **Frontend (`frontend/`)** – Interface web com React, usada pelos administradores das lojas.
-- **Bot (`BotVendas/`)** – Integração com WhatsApp, usando Node.js para interpretar e responder mensagens automaticamente.
+* **Arquitetura Multi-Tenant:** Um banco de dados central (`rzbotvendas`) gerencia as lojas, e cada loja (`empresa_...`) tem seu próprio banco de dados para clientes, pedidos e estoque.
+* **Painel Super Admin (`/admin`):** Uma interface dedicada para o dono do SaaS criar, gerenciar e configurar novas contas de lojas.
+* **Controle de Acesso (RBAC):** O gestor da loja (`admin`) pode criar contas para `funcionários` e definir permissões granulares sobre quais módulos eles podem acessar (ex: ver apenas pedidos, mas não o estoque).
+* **Autenticação Segura:** Sistema de login completo com senhas criptografadas (Bcrypt) e autenticação de sessão via **Tokens JWT (JSON Web Token)**.
+* **Gerenciamento de Estoque (CRUD):** Funcionalidades completas para criar, ler, atualizar e deletar produtos, incluindo upload de imagens.
+* **Bot Conversacional (WhatsApp):**
+    * Identificação automática da loja pelo número de telefone.
+    * Fluxo de catálogo completo com paginação e busca.
+    * Gerenciamento de carrinho (adicionar, remover, ver carrinho).
+    * Fluxo de checkout completo (coleta de nome, CPF, endereço).
+    * Registro automático do pedido no banco de dados da loja.
+* **Modo de Atendimento Humano:** O bot pode ser "pausado" pelo cliente para falar com um atendente e reativado com um comando, sem que o bot interfira na conversa.
+* **Painel do Cliente:** Dashboard com indicadores em tempo real (Total de Produtos, Itens em Estoque, Pedidos Hoje) e gerenciamento de pedidos.
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🏗 Arquitetura do Sistema
 
-| Camada       | Tecnologias                     |
-|--------------|----------------------------------|
-| Backend      | Node.js, Express, MySQL         |
-| Frontend     | React.js, CSS puro              |
-| Bot          | Node.js, WhatsApp Web JS        |
+O projeto é dividido em três microsserviços independentes que se comunicam via API REST:
+
+1.  **Backend (API Principal):** A API REST central construída em Node.js. Cuida da autenticação, regras de negócio, gerenciamento de empresas e toda a comunicação com os bancos de dados.
+2.  **Frontend (Painel de Controle):** Uma aplicação SPA (Single Page Application) construída em React.js. É a interface web que os gestores e funcionários das lojas usam para gerenciar seus negócios.
+3.  **Bot (Serviço de Mensageria):** Um serviço independente em Node.js que se conecta ao WhatsApp (usando `whatsapp-web.js`) e consome a API Principal para buscar dados (catálogo) e registrar informações (pedidos).
+
+
 
 ---
 
-## 🛠 Instalação e Execução
+## 🛠 Tecnologias e Versões
 
-### 1️⃣ Clone o Repositório
+Esta é a stack principal do projeto. (Nota: As versões listadas são padrões de mercado em 2025. Confirme em seus arquivos `package.json` para precisão absoluta.)
+
+| Área | Tecnologia | Versão Sugerida | Propósito |
+| :--- | :--- | :--- | :--- |
+| **Linguagens** | Node.js | 20.x.x | Ambiente de execução (Backend e Bot) |
+| | JavaScript | ES6+ | Linguagem principal |
+| | SQL | - | Linguagem de consulta ao banco |
+| **Backend** | Express.js | ~4.19.2 | Framework da API |
+| | MySQL2 | ~3.9.0 | Driver de conexão com o MySQL |
+| | JSON Web Token (`jsonwebtoken`) | ~9.0.0 | Autenticação e Sessão |
+| | Bcrypt | ~5.1.1 | Criptografia de senhas |
+| | CORS | ~2.8.5 | Habilita a comunicação com o frontend |
+| | Dotenv | ~16.4.5 | Gerenciamento de variáveis de ambiente |
+| | Multer | ~1.4.5 | Upload de arquivos e imagens |
+| **Frontend** | React.js | ~18.2.0 | Biblioteca de interface |
+| | React Router DOM | ~6.22.0 | Gerenciamento de rotas (páginas) |
+| | React Icons | ~5.0.0 | Pacote de ícones |
+| **Bot** | `whatsapp-web.js` | ~1.23.0 | Biblioteca principal de conexão com o WhatsApp |
+| | `qrcode-terminal` | ~0.12.0 | Geração do QR Code de login no terminal |
+| **Banco de Dados** | MariaDB | ~10.4.32 | Sistema de gerenciamento do banco de dados |
+| **Ferramentas** | Git & GitHub | - | Versionamento de código |
+| | VS Code | - | IDE de desenvolvimento |
+| | phpMyAdmin | ~5.2.1 | Interface de gerenciamento do banco |
+
+---
+
+## ⚙️ Instalação e Execução Local
+
+Para executar o ecossistema completo, você precisará de **3 terminais** rodando simultaneamente.
+
+### Pré-requisitos
+* Node.js (v18 ou superior)
+* NPM (v9 ou superior)
+* Um servidor MySQL (como XAMPP ou WAMP)
+
+### 1️⃣ Banco de Dados
+
+1.  Inicie seu serviço MySQL (Ex: XAMPP).
+2.  Abra o **phpMyAdmin**.
+3.  Crie o banco de dados central: `CREATE DATABASE rzbotvendas;`
+4.  Importe o arquivo `rzbotvendas.sql` para dentro deste banco.
+
+### 2️⃣ Backend (API Principal)
+
 ```bash
-git clone https://github.com/Anthony17DEV/BotVendas.git
-cd bot-vendas
-```
-
-### 2️⃣ Backend (API)
-```bash
+# 1. Navegue até a pasta do backend
 cd backend
+
+# 2. Instale as dependências
 npm install
-cp .env.example .env  # Configure suas variáveis
+
+# 3. Crie o arquivo .env e configure-o com sua porta, 
+#    senha do banco e sua SECRET_KEY para o JWT
+cp .env.example .env
+
+# 4. Inicie o servidor
 npm start
-```
-
-### 3️⃣ Frontend (Painel Web)
-```bash
-cd frontend
-npm install
-npm start
-```
-
-### 4️⃣ Bot de WhatsApp
-```bash
-cd BotVendas
-npm install
-npm start
-```
-
----
-
-## 🎯 Funcionalidades Implementadas
-
-- Cadastro de empresas e bancos de dados isolados
-- Sistema de login e autenticação
-- Cadastro e edição de produtos
-- Dashboard com indicadores e produtos em destaque
-- Integração com WhatsApp para automação de mensagens
-- Gerenciamento de pedidos
-
----
-
-## 💾 Banco de Dados
-
-Para restaurar o banco padrão:
-```bash
-mysql -u seu_usuario -p < rzbotvendas.sql
-```
-
----
-
-## 🔮 Roadmap / Próximas Entregas
-
-- [ ] Configuração visual e lógica dos fluxos do bot
-- [ ] Painel de pedidos com controle de status
-- [ ] Notificações automáticas via WhatsApp
-- [ ] Relatórios por período (vendas e estoque)
-- [ ] Integração com meios de pagamento
-
----
-
-## 🤝 Como Contribuir
-
-1. Faça um fork do projeto
-2. Crie uma branch com sua melhoria (`git checkout -b minha-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: minha melhoria'`)
-4. Envie um push para a branch (`git push origin minha-feature`)
-5. Abra um Pull Request
-
----
-
-**Desenvolvido com 💡 por YNF ANTHONY**  
+# O terminal deve mostrar: 🔥 Servidor rodando na porta 5000

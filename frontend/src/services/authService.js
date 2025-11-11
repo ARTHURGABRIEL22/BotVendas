@@ -2,8 +2,13 @@ const USER_KEY = 'botvendas_user';
 const TOKEN_KEY = 'botvendas_token';
 
 export const authService = {
-    login: (userData, token) => {
-        localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    /**
+     * Salva os dados do usuário e o token no localStorage após o login.
+     * @param {object} usuario - O objeto 'usuario' completo vindo da API (já contém nome, email, cargo, permissoes).
+     * @param {string} token - O token JWT.
+     */
+    login: (usuario, token) => {
+        localStorage.setItem(USER_KEY, JSON.stringify(usuario));
         localStorage.setItem(TOKEN_KEY, token);
     },
 
