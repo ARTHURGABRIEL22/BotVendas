@@ -1,4 +1,3 @@
-````markdown
 # 🧠 Bot Vendas – Sistema SaaS de Automação para WhatsApp
 
 ## 📌 Visão Geral
@@ -219,5 +218,3 @@ Sistema criado como TCC de conclusão de curso, com foco em escalabilidade e aut
 ---
 
 ```
-
----
