@@ -113,7 +113,6 @@ O sistema requer **3 terminais** rodando simultaneamente (Backend, Frontend e Bo
 3. Crie o banco de dados central:
    ```sql
    CREATE DATABASE rzbotvendas;
-````
 
 4. Importe o arquivo `rzbotvendas.sql` para este banco.
 
