@@ -1,4 +1,3 @@
-````markdown
 # 🧠 Bot Vendas – Sistema SaaS de Automação para WhatsApp
 
 ## 📌 Visão Geral
@@ -99,11 +98,9 @@ cp .env.example .env
 # 4. Inicie o servidor
 npm start
 # O terminal deve mostrar: 🔥 Servidor rodando na porta 5000
-````
 
 ### 3️⃣ Frontend (Painel)
 
-```bash
 # (Em um NOVO terminal)
 # 1. Navegue até a pasta do frontend
 cd frontend
@@ -118,11 +115,9 @@ cp .env.example .env
 # 4. Inicie a aplicação React
 npm start
 # O navegador deve abrir em http://localhost:3000
-```
 
 ### 4️⃣ Bot (Serviço de WhatsApp)
 
-```bash
 # (Em um TERCEIRO terminal)
 # 1. Navegue até a pasta do bot
 cd bot
@@ -140,24 +135,18 @@ npm start
 
 # 5. Escaneie o QR Code que aparecer no terminal
 #    com o celular que será o número da loja
-```
-
------
 
 ## 🔮 Roadmap / Melhorias Futuras
 
 O projeto está completo e funcional, mas sua arquitetura permite uma vasta gama de evoluções futuras, como:
 
-  * **Persistência de Estado do Bot:** Utilizar **Redis** para armazenar o estado das conversas, impedindo que carrinhos de compra sejam perdidos se o bot reiniciar.
-  * **Integração com IA (NLP):** Substituir o sistema de comandos (1, 2, 3) por uma plataforma de Processamento de Linguagem Natural (como Google Dialogflow) para permitir que o cliente escreva de forma natural (ex: "Quero ver camisas azuis").
-  * **Pagamentos In-Bot:** Integrar gateways de pagamento (Mercado Pago, Stripe) para gerar links de cartão de crédito ou QR Codes PIX (Copia e Cola) diretamente na conversa do WhatsApp.
-  * **Analytics Avançado:** Criar um painel de relatórios no frontend com gráficos (usando `Chart.js`) para que o lojista possa ver produtos mais vendidos, horários de pico e ticket médio.
-  * **Notificações em Tempo Real:** Usar **WebSockets** para que o painel do lojista toque um alarme e atualize a lista de pedidos instantaneamente quando um novo pedido chegar pelo bot.
-  * **Progressive Web App (PWA):** Permitir que o lojista "instale" o painel no celular como um aplicativo.
+* **Persistência de Estado do Bot:** Utilizar **Redis** para armazenar o estado das conversas, impedindo que carrinhos de compra sejam perdidos se o bot reiniciar.
+* **Integração com IA (NLP):** Substituir o sistema de comandos (1, 2, 3) por uma plataforma de Processamento de Linguagem Natural (como Google Dialogflow) para permitir que o cliente escreva de forma natural (ex: "Quero ver camisas azuis").
+* **Pagamentos In-Bot:** Integrar gateways de pagamento (Mercado Pago, Stripe) para gerar links de cartão de crédito ou QR Codes PIX (Copia e Cola) diretamente na conversa do WhatsApp.
+* **Analytics Avançado:** Criar um painel de relatórios no frontend com gráficos (usando `Chart.js`) para que o lojista possa ver produtos mais vendidos, horários de pico e ticket médio.
+* **Notificações em Tempo Real:** Usar **WebSockets** para que o painel do lojista toque um alarme e atualize a lista de pedidos instantaneamente quando um novo pedido chegar pelo bot.
+* **Progressive Web App (PWA):** Permitir que o lojista "instale" o painel no celular como um aplicativo.
 
------
+---
 
 **Desenvolvido com 💡 por YNF ANTHONY**
-
-```
-```
