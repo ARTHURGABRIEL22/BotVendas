@@ -215,5 +215,3 @@ O sistema está funcional e escalável, mas há espaço para aprimoramentos, com
 Sistema criado como TCC de conclusão de curso, com foco em escalabilidade e automação de vendas via WhatsApp.
 
 ---
-
-```
