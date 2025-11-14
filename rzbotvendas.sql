@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 07/05/2025 às 22:08
+-- Tempo de geração: 14/11/2025 às 01:13
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -51,13 +51,6 @@ CREATE TABLE `empresas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Despejando dados para a tabela `empresas`
---
-
-INSERT INTO `empresas` (`id`, `nome`, `email`, `telefone`, `proprietario`, `tipo_negocio`, `localizacao`, `banco_dados`, `cnpj_cpf`, `instagram`, `whatsapp`, `site`, `descricao`, `horario_funcionamento`, `formas_pagamento`, `plano_ativo`, `status_empresa`, `logo_url`, `observacoes`, `criado_em`) VALUES
-(27, 'Drip de Negrão', 'airanthony17@gmail.com', '84994624081', 'Anthony Anderson ', 'Loja de Roupas', 'Tibau-RN', 'empresa_13098766492', '130.987.664-92', '', '558494624081', '', '', '08:00 - 18:00', '[\"Pix\",\"Cartão de Crédito\",\"Cartão de Débito\",\"Dinheiro\"]', 'Premium', 'Ativo', NULL, '', '2025-03-26 09:00:52');
-
---
 -- Índices para tabelas despejadas
 --
 
@@ -78,7 +71,7 @@ ALTER TABLE `empresas`
 -- AUTO_INCREMENT de tabela `empresas`
 --
 ALTER TABLE `empresas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
