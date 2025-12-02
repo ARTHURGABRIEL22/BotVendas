@@ -18,7 +18,7 @@ exports.handleAddToCart = async (client, message) => {
     }
 
     const productsToAdd = [];
-    const startIndex = (catalogState.page - 1) * 5;
+    const startIndex = (catalogState.page - 1) * 5; 
 
     for (const indexStr of itemIndexes) {
         const index = parseInt(indexStr, 10);
@@ -54,7 +54,7 @@ exports.handleQuantityResponse = async (client, message) => {
         return;
     }
 
-    const product = queueState.queue.shift();
+    const product = queueState.queue.shift(); 
     
     if (!state.carts[from]) {
         state.carts[from] = [];
@@ -98,8 +98,8 @@ exports.showCart = async (client, from) => {
 
     summary += `\n💰 *Total geral:* R$ ${total.toFixed(2)}`;
     summary += `\n\n✅ Digite *"finalizar"* para concluir seu pedido.`;
-    summary += `\n🗑️ Digite *"remover X"* para tirar um item (ex: remover 2).`;
-
+    summary += `\n🗑️ Digite *"remover [Nº]"* para tirar 1 unidade.`;
+    
     await client.sendMessage(from, summary);
 };
 
@@ -108,17 +108,43 @@ exports.removeItem = async (client, message) => {
     const text = message.body.toLowerCase().trim();
     const cart = state.carts[from] || [];
 
-    const indexToRemove = parseInt(text.replace('remover', '').trim(), 10);
-    if (isNaN(indexToRemove) || indexToRemove < 1 || indexToRemove > cart.length) {
-        await client.sendMessage(from, '❌ Número do item inválido. Digite, por exemplo, "remover 1".');
+    const numeros = text.match(/\d+/g);
+
+    if (!numeros || numeros.length === 0) {
+        await client.sendMessage(from, '❌ Você precisa me dizer qual item remover. Exemplo: "remover 1".');
         return;
     }
 
-    const removedItem = cart.splice(indexToRemove - 1, 1)[0];
-    await client.sendMessage(from, `🗑️ Item *${removedItem.product.nome}* removido do carrinho.`);
+    const indexToRemove = parseInt(numeros[0], 10);
+
+    let qtdToRemove = 1;
+    if (numeros.length > 1) {
+        qtdToRemove = parseInt(numeros[1], 10);
+    }
+
+    if (isNaN(indexToRemove) || indexToRemove < 1 || indexToRemove > cart.length) {
+        await client.sendMessage(from, '❌ Número do item inválido. Verifique a lista do seu carrinho.');
+        return;
+    }
+
+    const itemIndex = indexToRemove - 1;
+    const item = cart[itemIndex];
+
+    console.log(`[DEBUG REMOVER] Item: ${item.product.nome}, Qtd Atual: ${item.quantity}, Qtd Remover: ${qtdToRemove}`);
+
+    const qtdAtual = parseInt(item.quantity, 10);
+    const qtdParaTirar = parseInt(qtdToRemove, 10);
+
+    if (qtdAtual > qtdParaTirar) {
+        item.quantity = qtdAtual - qtdParaTirar;
+        await client.sendMessage(from, `➖ Removido(s) ${qtdParaTirar} unidade(s) de *${item.product.nome}*. Restam ${item.quantity}.`);
+    } else {
+        cart.splice(itemIndex, 1);
+        await client.sendMessage(from, `🗑️ Item *${item.product.nome}* removido completamente do carrinho.`);
+    }
 
     if (cart.length > 0) {
-        await this.showCart(client, from); 
+        await this.showCart(client, from);
     } else {
         await client.sendMessage(from, '🛒 Seu carrinho agora está vazio.');
         await client.sendMessage(from, templates.mainMenu);

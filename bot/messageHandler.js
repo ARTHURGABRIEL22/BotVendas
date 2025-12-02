@@ -1,5 +1,5 @@
 const state = require('./state');
-const apiService = require('../services/apiService');
+const apiService = require('./services/apiService');
 const commandHandler = require('./handlers/commandHandler');
 const catalogHandler = require('./handlers/catalogHandler');
 const cartHandler = require('./handlers/cartHandler');
